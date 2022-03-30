@@ -1,12 +1,13 @@
 paper.install(window);
 
 window.onload = function () {
-  paper.setup("gridCanvas");
-  let colors = ["magenta", "yellow", "cyan"];
-  let triangles = [];
-  const segmentSize = 40;
-  triangleGrid(new Point(segmentSize, 0).rotate(-30), segmentSize, colors);
-  view.draw();
+    paper.setup("gridCanvas");
+    let colors = ["magenta", "yellow", "cyan"];
+    let triangles = [];
+    const segmentSize = 40;
+    triangleGrid(new Point(segmentSize, 0).rotate(-30), segmentSize, colors);
+    view.onResize = resizeFunction;
+    view.draw();
 };
 
 function triangleGrid(start, size, palette) {
@@ -35,7 +36,7 @@ function triangleQuadColumn(start, size, palette) {
   ];
   triangles.forEach((tri) => {
     tri.add(start);
-    tri.onClick = function () {
+    tri.onMouseDown = function () {
       clickColor(this, palette);
     };
   });
@@ -91,4 +92,8 @@ function makeTriangle(start, size, palette) {
     }
   };
   return p;
+}
+
+function resizeFunction() {
+    console.log("resized");
 }
