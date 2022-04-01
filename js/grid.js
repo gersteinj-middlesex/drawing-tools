@@ -25,6 +25,12 @@ window.onload = function () {
       active: false,
     }
   };
+  const drawingLineSettings = {
+    strokeColor: "red",
+    strokeWidth: 10,
+    from: new Point(20, 20),
+    to: new Point(50, 100)
+  };
   const unitSize = 50;
   const jumps = {
     X: new Point(unitSize, 0).rotate(30),
@@ -51,6 +57,7 @@ window.onload = function () {
     generateGridLine(node.position, jumps.Z, gridLineScale);
     
     node.onClick = event => {
+      console.log(drawingLayer.children);
       if(!drawingActive) {
         event.target.data.active = true;
         startPoint = event.target.position;
@@ -59,9 +66,11 @@ window.onload = function () {
         endPoint = event.target.position;
         console.log("draw!");
         drawingActive = false;
-        new Path.Line(startPoint, endPoint).strokeColor = "red";
+        drawingLineSettings.from = startPoint;
+        drawingLineSettings.to = endPoint;
+        new Path.Line(drawingLineSettings);
       }
-      console.log(startPoint);
+      
     }
   })
 
@@ -98,7 +107,7 @@ window.onload = function () {
 function generateGridLine(center, jump, scale) {
   let p = new Path.Line(center.subtract(jump.multiply(scale)), center.add(jump.multiply(scale)));
   p.strokeColor = "#00ccff33";
-  p.strokeWidth = 3;
+  p.strokeWidth = 8;
 }
 
 function generateGrid(start, end, xJump, yJump, nodeSettings) {
