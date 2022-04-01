@@ -1,3 +1,4 @@
+
 paper.install(window);
 
 window.onload = function () {
@@ -7,11 +8,12 @@ window.onload = function () {
     top: "magenta",
     front: "cyan",
     side: "yellow",
-    cleared: "#333",
+    inactive: "#fff6",
   };
   const nodeSettings = {
-    radius: 5,
-    fillColor: "#ccc",
+    radius: 10,
+    fillColor: colors.inactive,
+    strokeColor: "black",
   };
   const unitSize = 50;
   const jumps = {
@@ -20,7 +22,7 @@ window.onload = function () {
     Y: new Point(0, unitSize),
   };
 
-  const gridPoints = generateGrid(
+  const nodes = generateGrid(
     view.bounds.topLeft,
     view.bounds.bottomRight,
     jumps.X,
@@ -29,19 +31,23 @@ window.onload = function () {
   );
 
   let xLines = new Layer();
-  gridPoints.forEach(node => {
-    generateGridLine(node.position, jumps.X, .3);
+  let yLines = new Layer();
+  let zLines = new Layer();
+  const gridLineScale = .45;
+
+  nodes.forEach(node => {
+    node.onClick = event => {
+      console.log(event.target);
+    }
+    xLines.activate();
+    generateGridLine(node.position, jumps.X, gridLineScale);
+    yLines.activate();
+    generateGridLine(node.position, jumps.Y, gridLineScale);
+    zLines.activate();
+    generateGridLine(node.position, jumps.Z, gridLineScale);
   })
 
-  let yLines = new Layer();
-  gridPoints.forEach(node => {
-    generateGridLine(node.position, jumps.Y, .3);
-  })
-  
-  let zLines = new Layer();
-  gridPoints.forEach(node => {
-    generateGridLine(node.position, jumps.Z, .3);
-  })
+  gridLayer.bringToFront();
 
   view.draw();
 };
