@@ -2,10 +2,15 @@ paper.install(window);
 
 window.onload = function () {
   paper.setup("gridCanvas");
+  
   let drawingActive = false;
   let startPoint;
   let endPoint;
   const gridLayer = project.activeLayer;
+  let xLines = new Layer();
+  let yLines = new Layer();
+  let zLines = new Layer();
+  let drawingLayer = new Layer();
   const colors = {
     top: "magenta",
     front: "cyan",
@@ -27,6 +32,7 @@ window.onload = function () {
     Y: new Point(0, unitSize),
   };
 
+  gridLayer.activate();
   const nodes = generateGrid(
     view.bounds.topLeft,
     view.bounds.bottomRight,
@@ -35,12 +41,7 @@ window.onload = function () {
     nodeSettings
   );
 
-  let xLines = new Layer();
-  let yLines = new Layer();
-  let zLines = new Layer();
   const gridLineScale = .45;
-  let drawingLayer = new Layer();
-
   nodes.forEach(node => {
     xLines.activate();
     generateGridLine(node.position, jumps.X, gridLineScale);
@@ -66,6 +67,31 @@ window.onload = function () {
 
   gridLayer.bringToFront();
   drawingLayer.activate();
+  view.onKeyDown = event => {
+    let k = event.key;
+    console.log(k);
+    if (k == "t") {
+      xLines.visible = true;
+      yLines.visible = false;
+      zLines.visible = true;
+    } else if (k == 'f') {
+      xLines.visible = true;
+      yLines.visible = true;
+      zLines.visible = false;
+    } else if (k == 's') {
+      xLines.visible = false;
+      yLines.visible = true;
+      zLines.visible = true;
+    } else if (k == 'a') {
+      xLines.visible = true;
+      yLines.visible = true;
+      zLines.visible = true;
+    } else if (k == 'c') {
+      xLines.visible = false;
+      yLines.visible = false;
+      zLines.visible = false;
+    }
+  }
   view.draw();
 };
 
