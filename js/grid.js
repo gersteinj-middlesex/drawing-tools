@@ -4,8 +4,7 @@ window.onload = function () {
   paper.setup("gridCanvas");
   
   let drawingActive = false;
-  let startPoint;
-  let endPoint;
+  let currentPath;
   const gridLayer = project.activeLayer;
   let xLines = new Layer();
   let yLines = new Layer();
@@ -28,8 +27,7 @@ window.onload = function () {
   const drawingLineSettings = {
     strokeColor: "red",
     strokeWidth: 10,
-    from: new Point(20, 20),
-    to: new Point(50, 100)
+    closed: true,
   };
   const unitSize = 50;
   const jumps = {
@@ -59,16 +57,11 @@ window.onload = function () {
     node.onClick = event => {
       console.log(drawingLayer.children);
       if(!drawingActive) {
-        event.target.data.active = true;
-        startPoint = event.target.position;
+        currentPath = new Path(drawingLineSettings);
+        currentPath.add(event.target.position);
         drawingActive = true;
       } else {
-        endPoint = event.target.position;
-        console.log("draw!");
-        drawingActive = false;
-        drawingLineSettings.from = startPoint;
-        drawingLineSettings.to = endPoint;
-        new Path.Line(drawingLineSettings);
+        currentPath.add(event.target.position);
       }
       
     }
@@ -99,6 +92,9 @@ window.onload = function () {
       xLines.visible = false;
       yLines.visible = false;
       zLines.visible = false;
+    }
+    else if (k == 'escape') {
+      drawingActive = false;
     }
   }
   view.draw();
