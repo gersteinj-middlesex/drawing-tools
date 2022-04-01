@@ -1,8 +1,10 @@
-
 paper.install(window);
 
 window.onload = function () {
   paper.setup("gridCanvas");
+  let drawingActive = false;
+  let startPoint;
+  let endPoint;
   const gridLayer = project.activeLayer;
   const colors = {
     top: "magenta",
@@ -14,6 +16,9 @@ window.onload = function () {
     radius: 10,
     fillColor: colors.inactive,
     strokeColor: "black",
+    data: {
+      active: false,
+    }
   };
   const unitSize = 50;
   const jumps = {
@@ -34,21 +39,33 @@ window.onload = function () {
   let yLines = new Layer();
   let zLines = new Layer();
   const gridLineScale = .45;
+  let drawingLayer = new Layer();
 
   nodes.forEach(node => {
-    node.onClick = event => {
-      console.log(event.target);
-    }
     xLines.activate();
     generateGridLine(node.position, jumps.X, gridLineScale);
     yLines.activate();
     generateGridLine(node.position, jumps.Y, gridLineScale);
     zLines.activate();
     generateGridLine(node.position, jumps.Z, gridLineScale);
+    
+    node.onClick = event => {
+      if(!drawingActive) {
+        event.target.data.active = true;
+        startPoint = event.target.position;
+        drawingActive = true;
+      } else {
+        endPoint = event.target.position;
+        console.log("draw!");
+        drawingActive = false;
+        new Path.Line(startPoint, endPoint).strokeColor = "red";
+      }
+      console.log(startPoint);
+    }
   })
 
   gridLayer.bringToFront();
-
+  drawingLayer.activate();
   view.draw();
 };
 
