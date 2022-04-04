@@ -24,7 +24,8 @@ window.onload = function () {
     top: "magenta",
     front: "cyan",
     side: "yellow",
-    inactive: "#fff6",
+    inactive: "#fff9",
+    plain: "white"
   };
   const nodeSettings = {
     radius: 10,
@@ -34,8 +35,9 @@ window.onload = function () {
       active: false,
     }
   };
-  const drawingLineSettings = {
-    strokeColor: "red",
+  const drawingSettings = {
+    strokeColor: new Color(0, 0, 0, .5),
+    fillColor: colors.plain,
     strokeWidth: 10,
     closed: true,
   };
@@ -48,8 +50,8 @@ window.onload = function () {
   const gridLineScale = .45;
 
   const buttonNames = ["top", "front", "side", "esc", "edit"]
-  const buttonSettings = {
-    fontSize: 80,
+  const buttonLabelSettings = {
+    fontSize: 50,
     fontFamily: "cabin, cabin sketch, cabin, sans-serif",
     fillColor: "white",
     shadowColor: "black",
@@ -58,17 +60,30 @@ window.onload = function () {
     strokeColor: "black"
   }
 
+  const buttonBoxSettings = {
+    fillColor: new Color(20, 20, 20, .65),
+    strokeColor: "black",
+    shadowColor: "black",
+    shadowBlur: 10,
+  }
+
   /*****************************
    * Create buttons            *
    *****************************/
   buttonsLayer.activate();
   let count = 0
   let buttons = buttonNames.map(name => {
+    let buttonHeight = buttonLabelSettings.fontSize*1.5;
+    thisButton = { content: name, point: new Point(20, buttonHeight * (count+1)) }
+    let buttonLabel = new PointText({...buttonLabelSettings, ...thisButton});
     count += 1
-    thisButton = { content: name, point: new Point(20, buttonSettings.fontSize * count) }
-    return new PointText({...buttonSettings,...thisButton})
 
-  })
+    let buttonBox = new Path.Rectangle(buttonLabel.bounds.expand(25, 5));
+    buttonBox.style = buttonBoxSettings;
+    
+    return new Group(buttonBox,buttonLabel);
+    });
+
   console.log(buttons);
 
   /*****************************
@@ -103,7 +118,7 @@ window.onload = function () {
     node.onClick = event => {
       console.log(drawingLayer.children);
       if (!drawingActive) {
-        currentPath = new Path(drawingLineSettings);
+        currentPath = new Path(drawingSettings);
         currentPath.add(event.target.position);
         drawingActive = true;
       } else {
@@ -127,22 +142,27 @@ window.onload = function () {
       xLines.visible = true;
       yLines.visible = false;
       zLines.visible = true;
+      drawingSettings.fillColor = colors.top;
     } else if (k == 'f') {
       xLines.visible = true;
       yLines.visible = true;
       zLines.visible = false;
+      drawingSettings.fillColor = colors.front;
     } else if (k == 's') {
       xLines.visible = false;
       yLines.visible = true;
       zLines.visible = true;
+      drawingSettings.fillColor = colors.side;
     } else if (k == 'a') {
       xLines.visible = true;
       yLines.visible = true;
       zLines.visible = true;
+      drawingSettings.fillColor = colors.plain;
     } else if (k == 'c') {
       xLines.visible = false;
       yLines.visible = false;
       zLines.visible = false;
+      drawingSettings.fillColor = colors.plain;
     }
     else if (k == 'escape') {
       drawingActive = false;
