@@ -16,7 +16,10 @@ window.onload = function () {
   let yLines = new Layer();
   let zLines = new Layer();
   let drawingLayer = new Layer();
+  let buttonsLayer = new Layer();
+  // TODO: find better way to arrange layers
   gridLayer.bringToFront();
+  buttonsLayer.bringToFront();
   const colors = {
     top: "magenta",
     front: "cyan",
@@ -44,6 +47,29 @@ window.onload = function () {
   };
   const gridLineScale = .45;
 
+  const buttonNames = ["top", "front", "side", "esc", "edit"]
+  const buttonSettings = {
+    fontSize: 80,
+    fontFamily: "cabin, cabin sketch, cabin, sans-serif",
+    fillColor: "white",
+    shadowColor: "black",
+    shadowOffset: new Point(0, 0),
+    shadowBlur: 10,
+    strokeColor: "black"
+  }
+
+  /*****************************
+   * Create buttons            *
+   *****************************/
+  buttonsLayer.activate();
+  let count = 0
+  let buttons = buttonNames.map(name => {
+    count += 1
+    thisButton = { content: name, point: new Point(20, buttonSettings.fontSize * count) }
+    return new PointText({...buttonSettings,...thisButton})
+
+  })
+  console.log(buttons);
 
   /*****************************
    * Activate grid layer       *
@@ -65,7 +91,7 @@ window.onload = function () {
    * Create grid lines         *
    * Add click event to nodes  *
    *****************************/
-  
+
   nodes.forEach(node => {
     xLines.activate();
     generateGridLine(node.position, jumps.X, gridLineScale);
@@ -73,7 +99,7 @@ window.onload = function () {
     generateGridLine(node.position, jumps.Y, gridLineScale);
     zLines.activate();
     generateGridLine(node.position, jumps.Z, gridLineScale);
-    
+
     node.onClick = event => {
       console.log(drawingLayer.children);
       if (!drawingActive) {
@@ -83,10 +109,10 @@ window.onload = function () {
       } else {
         currentPath.add(event.target.position);
       }
-      
+
     }
   })
-  
+
   /*****************************
    * Activate drawing layer    *
    * Hide/show axes            *
@@ -144,10 +170,9 @@ function generateGrid(start, end, xJump, yJump, nodeSettings) {
       gridPoints.push(p);
     });
   }
-  let nodes = [];
-  gridPoints.forEach((point) => {
+  let nodes = gridPoints.map((point) => {
     nodeSettings.position = point;
-    nodes.push(new Path.Circle(nodeSettings));
+    return new Path.Circle(nodeSettings);
   });
   return nodes;
 }
