@@ -2,7 +2,13 @@ paper.install(window);
 
 window.onload = function () {
   paper.setup("gridCanvas");
-  
+
+  /*****************************
+   * Setting up layers, global *
+   * variables, and config     *
+   * objects                   *
+   *****************************/
+
   let drawingActive = false;
   let currentPath;
   const gridLayer = project.activeLayer;
@@ -10,6 +16,7 @@ window.onload = function () {
   let yLines = new Layer();
   let zLines = new Layer();
   let drawingLayer = new Layer();
+  gridLayer.bringToFront();
   const colors = {
     top: "magenta",
     front: "cyan",
@@ -35,6 +42,13 @@ window.onload = function () {
     Z: new Point(unitSize, 0).rotate(150),
     Y: new Point(0, unitSize),
   };
+  const gridLineScale = .45;
+
+
+  /*****************************
+   * Activate grid layer       *
+   * Create grid nodes         *
+   *****************************/
 
   gridLayer.activate();
   const nodes = generateGrid(
@@ -45,7 +59,13 @@ window.onload = function () {
     nodeSettings
   );
 
-  const gridLineScale = .45;
+
+  /*****************************
+   * Iterate through all nodes *
+   * Create grid lines         *
+   * Add click event to nodes  *
+   *****************************/
+  
   nodes.forEach(node => {
     xLines.activate();
     generateGridLine(node.position, jumps.X, gridLineScale);
@@ -56,7 +76,7 @@ window.onload = function () {
     
     node.onClick = event => {
       console.log(drawingLayer.children);
-      if(!drawingActive) {
+      if (!drawingActive) {
         currentPath = new Path(drawingLineSettings);
         currentPath.add(event.target.position);
         drawingActive = true;
@@ -66,8 +86,13 @@ window.onload = function () {
       
     }
   })
+  
+  /*****************************
+   * Activate drawing layer    *
+   * Hide/show axes            *
+   * Respond to keyboad UI     *
+   *****************************/
 
-  gridLayer.bringToFront();
   drawingLayer.activate();
   view.onKeyDown = event => {
     let k = event.key;
@@ -99,6 +124,7 @@ window.onload = function () {
   }
   view.draw();
 };
+
 
 function generateGridLine(center, jump, scale) {
   let p = new Path.Line(center.subtract(jump.multiply(scale)), center.add(jump.multiply(scale)));
