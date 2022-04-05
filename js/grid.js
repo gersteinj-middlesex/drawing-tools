@@ -10,6 +10,7 @@ window.onload = function () {
    *****************************/
 
   let drawingActive = false;
+  let currentMode = "edit";
   let currentPath;
   const gridLayer = project.activeLayer;
   let xLines = new Layer();
@@ -73,16 +74,21 @@ window.onload = function () {
   buttonsLayer.activate();
   let count = 0
   let buttons = buttonNames.map(name => {
-    let buttonHeight = buttonLabelSettings.fontSize*1.5;
-    thisButton = { content: name, point: new Point(20, buttonHeight * (count+1)) }
-    let buttonLabel = new PointText({...buttonLabelSettings, ...thisButton});
+    let buttonHeight = buttonLabelSettings.fontSize * 1.5;
+    thisButton = { content: name, point: new Point(20, buttonHeight * (count + 1)) }
+    let buttonLabel = new PointText({ ...buttonLabelSettings, ...thisButton });
     count += 1
 
     let buttonBox = new Path.Rectangle(buttonLabel.bounds.expand(25, 5));
     buttonBox.style = buttonBoxSettings;
-    
-    return new Group(buttonBox,buttonLabel);
-    });
+
+    let g = new Group(buttonBox, buttonLabel);
+    g.on({
+      click: (event) => { currentMode = event.target.children[1].content; console.log(currentMode); },
+      mouseleave: (event) => { console.log('bye'); }
+    })
+    return g;
+  });
 
   console.log(buttons);
 
@@ -137,36 +143,8 @@ window.onload = function () {
   drawingLayer.activate();
   view.onKeyDown = event => {
     let k = event.key;
-    console.log(k);
-    if (k == "t") {
-      xLines.visible = true;
-      yLines.visible = false;
-      zLines.visible = true;
-      drawingSettings.fillColor = colors.top;
-    } else if (k == 'f') {
-      xLines.visible = true;
-      yLines.visible = true;
-      zLines.visible = false;
-      drawingSettings.fillColor = colors.front;
-    } else if (k == 's') {
-      xLines.visible = false;
-      yLines.visible = true;
-      zLines.visible = true;
-      drawingSettings.fillColor = colors.side;
-    } else if (k == 'a') {
-      xLines.visible = true;
-      yLines.visible = true;
-      zLines.visible = true;
-      drawingSettings.fillColor = colors.plain;
-    } else if (k == 'c') {
-      xLines.visible = false;
-      yLines.visible = false;
-      zLines.visible = false;
-      drawingSettings.fillColor = colors.plain;
-    }
-    else if (k == 'escape') {
-      drawingActive = false;
-    }
+    
+    console.log(`Current Mode: ${currentMode}`);
   }
   view.draw();
 };
