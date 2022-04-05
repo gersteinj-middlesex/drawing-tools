@@ -68,6 +68,30 @@ window.onload = function () {
     shadowBlur: 10,
   }
 
+  const drawingModes = {
+    top: () => {
+      console.log('setting top mode');
+      xLines.visible = true;
+      yLines.visible = false;
+      zLines.visible = true;
+    },
+    front: () => {
+      xLines.visible = true;
+      yLines.visible = true;
+      zLines.visible = false;
+    },
+    side: () => {
+      xLines.visible = false;
+      yLines.visible = true;
+      zLines.visible = true;
+    },
+    edit: () => {
+      xLines.visible = true;
+      yLines.visible = true;
+      zLines.visible = true;
+    }
+  }
+
   /*****************************
    * Create buttons            *
    *****************************/
@@ -84,7 +108,14 @@ window.onload = function () {
 
     let g = new Group(buttonBox, buttonLabel);
     g.on({
-      click: (event) => { currentMode = event.target.children[1].content; console.log(currentMode); },
+      click: (event) => {
+        let buttonLabel = event.target.children[1].content;
+        if (buttonLabel == "esc") { drawingActive = false; }
+        else {
+          currentMode = buttonLabel;
+          drawingModes[currentMode]();
+        }
+      },
       mouseleave: (event) => { console.log('bye'); }
     })
     return g;
@@ -143,7 +174,7 @@ window.onload = function () {
   drawingLayer.activate();
   view.onKeyDown = event => {
     let k = event.key;
-    
+
     console.log(`Current Mode: ${currentMode}`);
   }
   view.draw();
